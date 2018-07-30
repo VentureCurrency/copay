@@ -1,20 +1,24 @@
 import { Directive, Inject } from '@angular/core';
-import { DOCUMENT } from "@angular/platform-browser";
+import { DOCUMENT } from '@angular/platform-browser';
 import { Clipboard } from '@ionic-native/clipboard';
+import { TranslateService } from '@ngx-translate/core';
 import { ToastController } from 'ionic-angular';
+
+// providers
 import { Logger } from '../../providers/logger/logger';
+import { NodeWebkitProvider } from '../../providers/node-webkit/node-webkit';
 import { PlatformProvider } from '../../providers/platform/platform';
 
 @Directive({
   selector: '[copy-to-clipboard]', // Attribute selector
-  inputs: ['value: copy-to-clipboard'],
+  inputs: ['value: copy-to-clipboard', 'hideToast: hide-toast'],
   host: {
     '(click)': 'copy()'
   }
 })
 export class CopyToClipboard {
-
   public value: string;
+  public hideToast: boolean;
   private dom: Document;
   private isCordova: boolean;
   private isNW: boolean;
@@ -24,7 +28,9 @@ export class CopyToClipboard {
     public toastCtrl: ToastController,
     public clipboard: Clipboard,
     public platform: PlatformProvider,
-    public logger: Logger
+    public logger: Logger,
+    public translate: TranslateService,
+    private nodeWebkitProvider: NodeWebkitProvider
   ) {
     this.logger.info('CopyToClipboardDirective initialized.');
     this.isCordova = this.platform.isCordova;
@@ -38,6 +44,7 @@ export class CopyToClipboard {
     textarea.value = this.value;
     textarea.select();
     this.dom.execCommand('copy');
+    this.dom.body.removeChild(textarea);
   }
 
   public copy() {
@@ -47,16 +54,19 @@ export class CopyToClipboard {
     if (this.isCordova) {
       this.clipboard.copy(this.value);
     } else if (this.isNW) {
-      // TODO: Node-webkit won't be supported
+      this.nodeWebkitProvider.writeToClipboard(this.value);
     } else {
       this.copyBrowser();
     }
+    if (this.hideToast) return;
     let showSuccess = this.toastCtrl.create({
-      message: 'Copied to clipboard',
+      message: this.translate.instant('Copied to clipboard'),
       duration: 1000,
-      position: 'top'
+      position: 'top',
+      cssClass: this.platform.isIOS
+        ? 'iosToastAfterHeader'
+        : 'mdToastAfterHeader'
     });
     showSuccess.present();
   }
-
 }

@@ -1,7 +1,7 @@
 <ion-header>
-  <ion-navbar>
+  <ion-navbar #navBar>
     <ion-title>{{'Send Feedback'|translate}}</ion-title>
-    <ion-buttons end>
+    <ion-buttons left>
       <button ion-button clear *ngIf="score" (click)="sendFeedback(null, true)">
         <span translate>Cancel</span>
       </button>
@@ -28,12 +28,11 @@
       <img class="send-feedback-star" *ngIf="5 > score" src="assets/img/ico-star.svg" />
     </ion-col>
   </ion-row>
-  <ion-item-divider text-wrap>
+  <ion-item-divider>
     <span>{{comment}}</span>
   </ion-item-divider>
   <form [formGroup]="feedbackForm">
-    <ion-textarea type="text" formControlName="comment" placeholder="{{'Your ideas, feedback, or comments' | translate}}" [value]="feedbackForm.value.comment"
-      required padding></ion-textarea>
+    <ion-textarea type="text" formControlName="comment" placeholder="{{'Your ideas, feedback, or comments' | translate}}" [value]="feedbackForm.value.comment" required padding></ion-textarea>
   </form>
 
   <button ion-button class="button-standard" (click)="sendFeedback(feedbackForm.value.comment)" [disabled]="!feedbackForm.valid">

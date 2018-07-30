@@ -1,9 +1,7 @@
 <ion-header>
-
   <ion-navbar>
     <ion-title>{{'Buy Gift Card'|translate}}</ion-title>
   </ion-navbar>
-
 </ion-header>
 
 <ion-content>
@@ -19,22 +17,26 @@
     </ion-item>
 
     <ion-item-group class="info">
-      <button ion-item (click)="showWallets()" class="wallets-list">
+      <button ion-item detail-none (click)="showWallets()" class="wallets-list">
         <div translate>From</div>
         <div class="wallet">
           <ion-icon item-start>
-            <img *ngIf="network == 'testnet'" [ngStyle]="{'background-color': wallet && wallet.color}" src="assets/img/icon-wallet-testnet.svg"
-              class="icon-wallet" />
-            <img *ngIf="network != 'testnet'" [ngStyle]="{'background-color': wallet && wallet.color}" src="assets/img/icon-wallet.svg"
-              class="icon-wallet" />
+            <img *ngIf="network == 'testnet'" [ngStyle]="{'background-color': wallet && wallet.color}" src="assets/img/icon-wallet-testnet.svg" class="icon-wallet" />
+            <img *ngIf="network != 'testnet'" [ngStyle]="{'background-color': wallet && wallet.color}" src="assets/img/icon-wallet.svg" class="icon-wallet" />
           </ion-icon>
           <div>{{wallet ? wallet.name : '...'}}</div>
+          <div class="last-item" item-end>
+            <button ion-button clear color="grey" icon-only>
+              <ion-icon *ngIf="!isOpenSelector" name="ios-arrow-down-outline"></ion-icon>
+              <ion-icon *ngIf="isOpenSelector" name="ios-arrow-up-outline"></ion-icon>
+            </button>
+          </div>
         </div>
       </button>
 
       <div *ngIf="totalAmountStr">
         <ion-item-divider>
-          Details
+          <span translate>Details</span>
         </ion-item-divider>
         <ion-item>
           <span translate>Gift Card</span>
@@ -72,7 +74,10 @@
 </ion-content>
 
 <ion-footer>
-  <button ion-button block class="button-footer" (click)="buyConfirm()" [disabled]="!(wallet && totalAmountStr)">
-    Confirmar a compra
-  </button>
+  <page-slide-to-accept #slideButton *ngIf="isCordova" [disabled]="!(wallet && totalAmountStr)" buttonText="Deslize para comprar" (slideDone)="buyConfirm()"></page-slide-to-accept>
+  <ion-toolbar *ngIf="!isCordova">
+    <button ion-button block class="button-footer" (click)="buyConfirm()" [disabled]="!(wallet && totalAmountStr)">
+      Confirmar a compra
+    </button>
+  </ion-toolbar>
 </ion-footer>

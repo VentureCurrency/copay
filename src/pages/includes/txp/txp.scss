@@ -1,27 +1,23 @@
-page-txp{
-  .proposal-container {
-    border-left: 2px solid #ff9900;
-  }
-  img {
-    width: 40px;
-    height: 40px;
-    border-radius: $icon-border-radius;
-  }
-  .label {
-    display: -webkit-inline-box;
-  }
-  .action {
-    width: 100%;
+page-txp {
+  .item-title {
+    margin-bottom: 0.3rem;
     overflow: hidden;
     text-overflow: ellipsis;
-    white-space: nowrap;
-    .copayer {
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      font-size: 12.5px;
-      font-weight: 300;
+    display: -webkit-box;
+    line-clamp: 2;
+    -webkit-line-clamp: 2;
+    box-orient: vertical;
+    -webkit-box-orient: vertical;
+  }
+  .item-subtitle {
+    .icon-container {
+      vertical-align: middle;
+      width: 18px;
+      margin: 0 2px 0 0;
     }
+  }
+  .proposal-container {
+    border-left: 2px solid color($colors, primary);
   }
   ion-note {
     text-align: end;

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Events, NavController, NavParams } from 'ionic-angular';
+import { App, Events, NavController, NavParams } from 'ionic-angular';
 import { Logger } from '../../../../../providers/logger/logger';
 
 // providers
@@ -10,28 +10,28 @@ import { ProfileProvider } from '../../../../../providers/profile/profile';
 import { WalletExtendedPrivateKeyPage } from './wallet-extended-private-key/wallet-extended-private-key';
 
 import * as _ from 'lodash';
+import { TabsPage } from '../../../../tabs/tabs';
 
 @Component({
   selector: 'page-wallet-information',
-  templateUrl: 'wallet-information.html',
+  templateUrl: 'wallet-information.html'
 })
 export class WalletInformationPage {
-
-  public wallet: any;
+  public wallet;
   public walletId: string;
   public walletName: string;
   public N: number;
   public M: number;
-  public copayers: any;
-  public copayerId: any;
-  public balanceByAddress: any;
+  public copayers;
+  public copayerId;
+  public balanceByAddress;
   public account: number;
   public coin: string;
   public network: string;
   public addressType: string;
   public derivationStrategy: string;
   public basePath: string;
-  public pubKeys: any[];
+  public pubKeys;
   public externalSource: string;
   public canSign: boolean;
   public needsBackup: boolean;
@@ -39,15 +39,14 @@ export class WalletInformationPage {
   private BLACK_WALLET_COLOR = '#202020';
 
   constructor(
+    private app: App,
     private profileProvider: ProfileProvider,
     private configProvider: ConfigProvider,
     private navParams: NavParams,
     private navCtrl: NavController,
     private events: Events,
     private logger: Logger
-  ) {
-
-  }
+  ) {}
 
   ionViewDidLoad() {
     this.logger.info('ionViewDidLoad WalletInformationPage');
@@ -55,7 +54,7 @@ export class WalletInformationPage {
 
   ionViewWillEnter() {
     this.wallet = this.profileProvider.getWallet(this.navParams.data.walletId);
-    this.walletName = this.wallet.credentials.walletName;
+    this.walletName = this.wallet.name;
     this.coin = this.wallet.coin;
     this.walletId = this.wallet.credentials.walletId;
     this.N = this.wallet.credentials.n;
@@ -66,8 +65,9 @@ export class WalletInformationPage {
     this.account = this.wallet.credentials.account;
     this.network = this.wallet.credentials.network;
     this.addressType = this.wallet.credentials.addressType || 'P2SH';
-    this.derivationStrategy = this.wallet.credentials.derivationStrategy || 'BIP45';
-    this.basePath = this.wallet.credentials.getBaseAddressDerivationPath();;
+    this.derivationStrategy =
+      this.wallet.credentials.derivationStrategy || 'BIP45';
+    this.basePath = this.wallet.credentials.getBaseAddressDerivationPath();
     this.pubKeys = _.map(this.wallet.credentials.publicKeyRing, 'xPubKey');
     this.externalSource = null;
     this.canSign = this.wallet.canSign();
@@ -80,7 +80,7 @@ export class WalletInformationPage {
       return;
     }
     this.save(this.BLACK_WALLET_COLOR);
-  };
+  }
 
   private save(color): void {
     let opts = {
@@ -89,12 +89,12 @@ export class WalletInformationPage {
     opts.colorFor[this.wallet.credentials.walletId] = color;
     this.configProvider.set(opts);
     this.events.publish('wallet:updated', this.wallet.credentials.walletId);
-    this.navCtrl.popToRoot({ animate: false }).then(() => {
-      this.navCtrl.parent.select(0);
-    });
-  };
+    this.app.getRootNavs()[0].setRoot(TabsPage);
+  }
 
   public openWalletExtendedPrivateKey(): void {
-    this.navCtrl.push(WalletExtendedPrivateKeyPage, { walletId: this.wallet.credentials.walletId });
+    this.navCtrl.push(WalletExtendedPrivateKeyPage, {
+      walletId: this.wallet.credentials.walletId
+    });
   }
 }

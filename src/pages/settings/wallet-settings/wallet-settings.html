@@ -6,11 +6,12 @@
 <ion-content>
   <page-wallet-item [wallet]="wallet"></page-wallet-item>
   <ion-list>
+    <ion-item-divider></ion-item-divider>
     <button ion-item (click)="openWalletName()">
-      <span translate>Name</span>
-      <ion-note item-end>
+      <div translate float-left>Name</div>
+      <div text-end text-wrap ion-text color="light-grey">
         {{walletName}}
-      </ion-note>
+      </div>
     </button>
     <button ion-item (click)="openWalletColor()">
       <span translate>Color</span>
@@ -23,18 +24,19 @@
     <ion-item-divider>{{'Security' | translate}}</ion-item-divider>
     <button ion-item (click)="openBackupSettings()">
       <span translate>Backup</span>
-      <ion-note *ngIf="needsBackup" class="assertive" item-end>
-        {{'Needs backup recovery' | translate}}
+      <ion-note *ngIf="needsBackup" class="wallet-warning" item-end>
+        {{'Paper key unverified' | translate}}
       </ion-note>
     </button>
     <div *ngIf="canSign">
       <ion-item>
         <ion-label>{{'Request Encrypt Password' | translate}}</ion-label>
-        <ion-toggle [(ngModel)]="encryptEnabled" (ionChange)="encryptChange()"></ion-toggle>
+        <ion-toggle [(ngModel)]="encryptEnabled" (ionChange)="encryptChange()" [disabled]="(needsBackup || !wallet.isComplete()) && !encryptEnabled"></ion-toggle>
       </ion-item>
-      <ion-item-divider text-wrap>
+      <ion-item-divider>
         <span class="item-text" translate>
-          If enabled, all sensitive information (private key and recovery phrase) and actions (spending and exporting) associated with this wallet will be protected.
+          If enabled, all sensitive information (private key and recovery phrase) and actions (spending and exporting) associated with
+          this wallet will be protected.
         </span>
         <a (click)="openSupportSpendingPassword()" translate>Learn more</a>
       </ion-item-divider>
